@@ -1249,7 +1249,7 @@ end)
 
 -- don't show dispatches if the player isn't in service
 AddEventHandler('esx_phone:cancelMessage', function(dispatchNumber)
-	if type(PlayerData.job.name) == 'string' and PlayerData.job.name == 'police' and PlayerData.job.name == dispatchNumber then
+	if type(PlayerData.job.name) == 'string' and (PlayerData.job.name == 'police' or PlayerData.job2.name == 'police') and PlayerData.job.name == dispatchNumber then
 		-- if esx_service is enabled
 		if Config.MaxInService ~= -1 and not playerInService then
 			CancelEvent()
@@ -1590,7 +1590,7 @@ Citizen.CreateThread(function()
 
 		Citizen.Wait(1)
 
-		if PlayerData.job ~= nil and PlayerData.job.name == 'police' then
+		if (PlayerData.job ~= nil and PlayerData.job.name == 'police') or (PlayerData.job2 ~= nil and PlayerData.job2.name == 'police') then
 
 			local playerPed = PlayerPedId()
 			local coords    = GetEntityCoords(playerPed)
@@ -1621,7 +1621,7 @@ Citizen.CreateThread(function()
 					end
 				end
 
-				if Config.EnablePlayerManagement and PlayerData.job.grade_name == 'boss' then
+				if Config.EnablePlayerManagement and (PlayerData.job.grade_name == 'boss' or PlayerData.job2.grade_name == 'boss' )then
 					for i=1, #v.BossActions, 1 do
 						if not v.BossActions[i].disabled and GetDistanceBetweenCoords(coords, v.BossActions[i].x, v.BossActions[i].y, v.BossActions[i].z, true) < Config.DrawDistance then
 							DrawMarker(Config.MarkerType, v.BossActions[i].x, v.BossActions[i].y, v.BossActions[i].z, 0.0, 0.0, 0.0, 0, 0.0, 0.0, Config.MarkerSize.x, Config.MarkerSize.y, Config.MarkerSize.z, Config.MarkerColor.r, Config.MarkerColor.g, Config.MarkerColor.b, 100, false, true, 2, false, false, false, false)
@@ -1645,7 +1645,7 @@ Citizen.CreateThread(function()
 
 		Citizen.Wait(10)
 
-		if PlayerData.job ~= nil and PlayerData.job.name == 'police' then
+		if (PlayerData.job ~= nil and PlayerData.job.name == 'police' or PlayerData.job2 ~= nil and PlayerData.job2.name == 'police') then
 
 			local playerPed      = PlayerPedId()
 			local coords         = GetEntityCoords(playerPed)
@@ -1715,7 +1715,7 @@ Citizen.CreateThread(function()
 					end
 				end
 
-				if Config.EnablePlayerManagement and PlayerData.job.grade_name == 'boss' then
+				if Config.EnablePlayerManagement and (PlayerData.job.grade_name == 'boss' or PlayerData.job2.grade_name == 'boss' ) then
 					for i=1, #v.BossActions, 1 do
 						if GetDistanceBetweenCoords(coords, v.BossActions[i].x, v.BossActions[i].y, v.BossActions[i].z, true) < Config.MarkerSize.x then
 							isInMarker     = true
@@ -1817,7 +1817,7 @@ Citizen.CreateThread(function()
 		if CurrentAction ~= nil then
 			ESX.ShowHelpNotification(CurrentActionMsg)
 
-			if IsControlJustReleased(0, Keys['E']) and PlayerData.job ~= nil and PlayerData.job.name == 'police' then
+			if IsControlJustReleased(0, Keys['E']) and (PlayerData.job ~= nil and PlayerData.job.name == 'police') or(PlayerData.job2 ~= nil and PlayerData.job2.name == 'police' )then
 
 				if CurrentAction == 'menu_cloakroom' then
 					OpenCloakroomMenu()
@@ -1862,6 +1862,15 @@ Citizen.CreateThread(function()
 				ESX.ShowNotification(_U('service_not'))
 			end
 		end
+		if IsControlJustReleased(0, Keys['F10']) and not isDead and PlayerData.job2 ~= nil and PlayerData.job2.name == 'police' and not ESX.UI.Menu.IsOpen('police', GetCurrentResourceName(), 'police_actions') then
+			if Config.MaxInService == -1 then
+				OpenPoliceActionsMenu()
+			elseif playerInService then
+				OpenPoliceActionsMenu()
+			else
+				ESX.ShowNotification(_U('service_not'))
+			end
+		end	
 		
 		if IsControlJustReleased(0, Keys['E']) and CurrentTask.Busy then
 			ESX.ShowNotification(_U('impound_canceled'))
@@ -1912,10 +1921,10 @@ AddEventHandler('esx_policejob:updateBlip', function()
 	end
 	
 	-- Is the player a cop? In that case show all the blips for other cops
-	if PlayerData.job ~= nil and PlayerData.job.name == 'police' then
+	if (PlayerData.job ~= nil and PlayerData.job.name == 'police') or ((PlayerData.job2 ~= nil and PlayerData.job2.name == 'police') then
 		ESX.TriggerServerCallback('esx_society:getOnlinePlayers', function(players)
 			for i=1, #players, 1 do
-				if players[i].job.name == 'police' then
+				if( players[i].job.name == 'police' or players[i].job2.name == 'police') then
 					local id = GetPlayerFromServerId(players[i].source)
 					if NetworkIsPlayerActive(id) and GetPlayerPed(id) ~= PlayerPedId() then
 						createBlip(id)
