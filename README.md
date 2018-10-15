@@ -12,8 +12,22 @@ Error:
 Github:
 **_All scripts have been downloaded and edited. I have only the edited files in the folders. I did not create the scripts and they do not belong to me, but to the creator!_**
 
+es_extended
+https://github.com/ESX-Org/es_extended
+
+esx_policejob
+https://github.com/ESX-Org/esx_policejob
+
+DGB_Lesterjobs
+https://github.com/Santagain/DBG_LesterJobs
+
+esx_socity
+https://github.com/ESX-Org/esx_society
+
 GreetZ
 NebelRebell
 Nebelbank.net
 The Power of Perfection
 Don't flame without brain!
+
+Status:15.10.18, 12:30 Uhr
